@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votre avis compte — Formulaire de satisfaction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#FBF7F0;
+    --card:#FFFFFF;
+    --sage:#93A481;
+    --sage-dark:#5F7150;
+    --sage-pale:#E7ECE0;
+    --gold:#C9A227;
+    --ink:#33312C;
+    --muted:#8A8678;
+    --line:#E7E2D6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    background-image:
+      radial-gradient(circle at 8% 12%, rgba(147,164,129,0.10), transparent 40%),
+      radial-gradient(circle at 92% 88%, rgba(201,162,39,0.08), transparent 40%);
+    font-family:'Jost',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .leaf{
+    position:fixed;
+    opacity:0.18;
+    pointer-events:none;
+  }
+  .leaf.tl{ top:-40px; left:-30px; width:180px; transform:rotate(20deg);}
+  .leaf.br{ bottom:-40px; right:-30px; width:180px; transform:rotate(200deg);}
+
+  .card{
+    background:var(--card);
+    width:100%;
+    max-width:560px;
+    border-radius:18px;
+    box-shadow:0 20px 60px rgba(51,49,44,0.10), 0 2px 8px rgba(51,49,44,0.06);
+    padding:44px 40px 36px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--sage), var(--gold));
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--sage-dark);
+    font-weight:500;
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:32px;
+    line-height:1.15;
+    margin:0 0 10px;
+    color:var(--ink);
+  }
+  .intro{
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.55;
+    margin:0 0 28px;
+  }
+
+  .progress{
+    display:flex;
+    gap:6px;
+    margin-bottom:30px;
+  }
+  .progress .seg{
+    flex:1;
+    height:4px;
+    border-radius:4px;
+    background:var(--line);
+    overflow:hidden;
+  }
+  .progress .seg .fill{
+    height:100%;
+    width:0%;
+    background:var(--sage);
+    transition:width .4s ease;
+  }
+
+  .step{ display:none; animation:fadeIn .35s ease; }
+  .step.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  label.field-label{
+    display:block;
+    font-size:15px;
+    font-weight:500;
+    color:var(--ink);
+    margin:0 0 12px;
+  }
+  .block{ margin-bottom:26px; }
+  .block:last-child{ margin-bottom:8px; }
+
+  select, textarea, input[type="text"]{
+    width:100%;
+    font-family:'Jost',sans-serif;
+    font-size:15px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--ivory);
+    color:var(--ink);
+    outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  select:focus, textarea:focus, input[type="text"]:focus{
+    border-color:var(--sage);
+    box-shadow:0 0 0 3px rgba(147,164,129,0.20);
+  }
+  textarea{ resize:vertical; min-height:90px; line-height:1.5; }
+
+  .petals{
+    display:flex;
+    gap:10px;
+  }
+  .petal-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:2px;
+    line-height:0;
+    transform:scale(1);
+    transition:transform .15s ease;
+  }
+  .petal-btn:hover{ transform:scale(1.15); }
+  .petal-btn svg{ width:34px; height:34px; }
+  .petal-btn path{ fill:var(--line); stroke:var(--line); transition:fill .2s ease, stroke .2s ease; }
+  .petal-btn.filled path{ fill:var(--gold); stroke:var(--gold); }
+  .petal-btn:focus-visible{ outline:2px solid var(--sage-dark); outline-offset:3px; border-radius:6px; }
+
+  .petal-row-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .petal-row-label span:first-child{ font-size:14px; color:var(--ink); font-weight:500; }
+  .petal-row .petal-btn svg{ width:24px; height:24px; }
+
+  .choice-group{ display:flex; gap:10px; flex-wrap:wrap; }
+  .choice-btn{
+    padding:10px 18px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Jost',sans-serif;
+    font-size:14px;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .choice-btn:hover{ border-color:var(--sage); }
+  .choice-btn.selected{
+    background:var(--sage);
+    border-color:var(--sage);
+    color:#fff;
+  }
+
+  .nav-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:30px;
+  }
+  .btn{
+    font-family:'Jost',sans-serif;
+    font-size:15px;
+    font-weight:500;
+    padding:13px 26px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    transition:background .2s ease, transform .12s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--sage-dark); color:#fff; margin-left:auto; }
+  .btn-primary:hover{ background:#4d5e40; }
+  .btn-primary:disabled{ background:#c9c6ba; cursor:not-allowed; }
+  .btn-ghost{ background:none; color:var(--muted); }
+  .btn-ghost:hover{ color:var(--ink); }
+
+  .thanks{ text-align:center; padding:20px 0 4px; }
+  .thanks svg{ width:56px; height:56px; margin-bottom:14px; }
+  .thanks h1{ font-size:28px; }
+  .thanks p{ color:var(--muted); font-size:15px; }
+
+  .stats-link{
+    display:block;
+    text-align:center;
+    margin-top:22px;
+    font-size:12.5px;
+    color:var(--muted);
+    text-decoration:underline;
+    cursor:pointer;
+    background:none;
+    border:none;
+    font-family:'Jost',sans-serif;
+  }
+  .stats-panel{ margin-top:18px; border-top:1px solid var(--line); padding-top:18px; }
+  .stats-row{ display:flex; justify-content:space-between; font-size:14px; padding:6px 0; color:var(--ink); }
+  .stats-row span:last-child{ color:var(--sage-dark); font-weight:600; }
+  .stats-empty{ color:var(--muted); font-size:14px; text-align:center; padding:10px 0; }
+  .required-note{ font-size:12px; color:var(--muted); margin-top:-4px; margin-bottom:16px; }
+</style>
+</head>
+<body>
+
+<svg class="leaf tl" viewBox="0 0 200 200" fill="none"><path d="M20 180 C 40 100, 100 40, 180 20" stroke="#5F7150" stroke-width="2"/><path d="M40 160 C 55 110, 100 65, 160 45" stroke="#5F7150" stroke-width="2"/></svg>
+<svg class="leaf br" viewBox="0 0 200 200" fill="none"><path d="M20 180 C 40 100, 100 40, 180 20" stroke="#C9A227" stroke-width="2"/><path d="M40 160 C 55 110, 100 65, 160 45" stroke="#C9A227" stroke-width="2"/></svg>
+
+<div class="card">
+
+  <div id="formWrap">
+    <p class="eyebrow">Votre retour</p>
+    <h1>Comment s'est passée votre prestation ?</h1>
+    <p class="intro">Quelques minutes suffisent — votre avis m'aide à améliorer chaque prochain événement.</p>
+
+    <div class="progress">
+      <div class="seg"><div class="fill" id="fill1"></div></div>
+      <div class="seg"><div class="fill" id="fill2"></div></div>
+      <div class="seg"><div class="fill" id="fill3"></div></div>
+      <div class="seg"><div class="fill" id="fill4"></div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step active" data-step="1">
+      <div class="block">
+        <label class="field-label">Quel type d'événement avons-nous préparé ensemble ?</label>
+        <select id="eventType">
+          <option value="">Sélectionnez —</option>
+          <option>Mariage</option>
+          <option>Anniversaire</option>
+          <option>Baby shower</option>
+          <option>Soirée pyjama / événement enfant</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="block">
+        <label class="field-label">Votre satisfaction générale</label>
+        <div class="petals" id="petalsMain"></div>
+        <p class="required-note" id="mainRatingNote"></p>
+      </div>
+      <div class="nav-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goTo(2)">Continuer</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" data-step="2">
+      <label class="field-label" style="margin-bottom:18px;">Notez plus précisément quelques aspects</label>
+
+      <div class="block petal-row">
+        <div class="petal-row-label"><span>Communication</span></div>
+        <div class="petals" data-rating="communication"></div>
+      </div>
+      <div class="block petal-row">
+        <div class="petal-row-label"><span>Rendu de la décoration</span></div>
+        <div class="petals" data-rating="rendu"></div>
+      </div>
+      <div class="block petal-row">
+        <div class="petal-row-label"><span>Respect du thème demandé</span></div>
+        <div class="petals" data-rating="theme"></div>
+      </div>
+      <div class="block petal-row">
+        <div class="petal-row-label"><span>Ponctualité</span></div>
+        <div class="petals" data-rating="ponctualite"></div>
+      </div>
+      <div class="block petal-row">
+        <div class="petal-row-label"><span>Rapport qualité / prix</span></div>
+        <div class="petals" data-rating="prix"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goTo(1)">Retour</button>
+        <button class="btn btn-primary" onclick="goTo(3)">Continuer</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" data-step="3">
+      <div class="block">
+        <label class="field-label">Qu'avez-vous préféré ?</label>
+        <textarea id="liked" placeholder="Ce qui vous a le plus marqué..."></textarea>
+      </div>
+      <div class="block">
+        <label class="field-label">Que pourrions-nous améliorer ?</label>
+        <textarea id="improve" placeholder="Vos suggestions, même un petit détail..."></textarea>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goTo(2)">Retour</button>
+        <button class="btn btn-primary" onclick="goTo(4)">Continuer</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" data-step="4">
+      <div class="block">
+        <label class="field-label">Recommanderiez-vous mes services ?</label>
+        <div class="choice-group" id="recommendGroup">
+          <button type="button" class="choice-btn" data-value="oui">Oui, avec plaisir</button>
+          <button type="button" class="choice-btn" data-value="peut-etre">Peut-être</button>
+          <button type="button" class="choice-btn" data-value="non">Non</button>
+        </div>
+      </div>
+      <div class="block">
+        <label class="field-label">Votre nom <span style="color:var(--muted); font-weight:400;">(facultatif)</span></label>
+        <input type="text" id="clientName" placeholder="Prénom et nom">
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="goTo(3)">Retour</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Envoyer mon avis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANK YOU -->
+  <div class="thanks" id="thanksWrap" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 C13 6 16 8 20 9 C16 10 13 12 12 16 C11 12 8 10 4 9 C8 8 11 6 12 2Z" fill="#C9A227"/></svg>
+    <h1>Votre messagerie va s'ouvrir</h1>
+    <p>Il ne reste qu'à appuyer sur "Envoyer" dans votre application mail pour que votre avis me parvienne. Merci infiniment !</p>
+  </div>
+
+</div>
+
+<script>
+const state = { main:0, communication:0, rendu:0, theme:0, ponctualite:0, prix:0, recommend:null };
+const steps = [1,2,3,4];
+let currentStep = 1;
+
+function petalSVG(){
+  return '<svg viewBox="0 0 24 24"><path d="M12 2 C13 6 16 8 20 9 C16 10 13 12 12 16 C11 12 8 10 4 9 C8 8 11 6 12 2Z"/></svg>';
+}
+
+function buildPetals(container, key, count){
+  container.innerHTML = '';
+  for(let i=1;i<=count;i++){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'petal-btn';
+    btn.setAttribute('aria-label', 'Note ' + i + ' sur ' + count);
+    btn.innerHTML = petalSVG();
+    btn.addEventListener('click', ()=>{
+      state[key] = i;
+      Array.from(container.children).forEach((c, idx)=>{
+        c.classList.toggle('filled', idx < i);
+      });
+      if(key==='main'){ document.getElementById('mainRatingNote').textContent = ''; }
+    });
+    container.appendChild(btn);
+  }
+}
+
+buildPetals(document.getElementById('petalsMain'), 'main', 5);
+document.querySelectorAll('[data-rating]').forEach(el=>{
+  buildPetals(el, el.getAttribute('data-rating'), 5);
+});
+
+document.querySelectorAll('#recommendGroup .choice-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#recommendGroup .choice-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.recommend = btn.getAttribute('data-value');
+  });
+});
+
+function updateProgress(){
+  steps.forEach(s=>{
+    const fill = document.getElementById('fill'+s);
+    fill.style.width = (s <= currentStep) ? '100%' : '0%';
+  });
+}
+
+function goTo(step){
+  if(currentStep === 1 && step === 2 && state.main === 0){
+    document.getElementById('mainRatingNote').textContent = 'Merci de choisir une note avant de continuer.';
+    document.getElementById('mainRatingNote').style.color = '#B5533C';
+    return;
+  }
+  document.querySelectorAll('.step').forEach(el=>el.classList.remove('active'));
+  document.querySelector('.step[data-step="'+step+'"]').classList.add('active');
+  currentStep = step;
+  updateProgress();
+}
+updateProgress();
+
+const DEST_EMAIL = "TON-ADRESSE@exemple.com"; // <-- remplace par ton adresse email
+
+function petalLabel(n){
+  return n > 0 ? (n + '/5') : 'non noté';
+}
+
+function submitForm(){
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Préparation de l\'email...';
+
+  const eventType = document.getElementById('eventType').value || 'non précisé';
+  const liked = document.getElementById('liked').value.trim() || '—';
+  const improve = document.getElementById('improve').value.trim() || '—';
+  const name = document.getElementById('clientName').value.trim() || 'Non communiqué';
+  const recommend = state.recommend || 'non précisé';
+
+  const subject = "Avis de satisfaction - " + eventType + (name !== 'Non communiqué' ? ' - ' + name : '');
+
+  const body =
+"Nouvel avis de satisfaction\n" +
+"----------------------------\n" +
+"Type d'événement : " + eventType + "\n" +
+"Nom du client : " + name + "\n\n" +
+"Satisfaction générale : " + petalLabel(state.main) + "\n" +
+"Communication : " + petalLabel(state.communication) + "\n" +
+"Rendu de la décoration : " + petalLabel(state.rendu) + "\n" +
+"Respect du thème : " + petalLabel(state.theme) + "\n" +
+"Ponctualité : " + petalLabel(state.ponctualite) + "\n" +
+"Rapport qualité/prix : " + petalLabel(state.prix) + "\n\n" +
+"Recommanderait mes services : " + recommend + "\n\n" +
+"Ce qu'il/elle a préféré :\n" + liked + "\n\n" +
+"Suggestions d'amélioration :\n" + improve + "\n";
+
+  const mailtoLink = "mailto:" + DEST_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+
+  window.location.href = mailtoLink;
+
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('thanksWrap').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
